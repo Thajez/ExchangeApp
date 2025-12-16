@@ -144,7 +144,7 @@ function App() {
     const [visitedExchanges, setVisitedExchanges] = useState([]);
     const [user, setUser] = useState(null);
     const [showLogin, setShowLogin] = useState(true);
-    const [isRegisterMode, setIsRegisterMode] = useState(false);
+    const [isRegisterMode, setIsRegisterMode] = useState(true);
     const [expandedFaq, setExpandedFaq] = useState(null);
     const [loginForm, setLoginForm] = useState({ email: '', password: '', name: '' });
 
@@ -286,7 +286,7 @@ function App() {
                 </div>
             )}
 
-            <div className="section-header">Visos keityklos</div>
+            <div className="section-header">All exchange shops</div>
             {mockExchanges.slice(0, 3).map(exchange => (
                 <div key={exchange.id} className="exchange-list-item" onClick={() => setSelectedExchange(exchange)}>
                     <div className="exchange-list-content">
