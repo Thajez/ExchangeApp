@@ -286,7 +286,7 @@ function App() {
                 </div>
             )}
 
-            <div className="section-header">All exchange shops</div>
+            <div className="section-header">Popular exchange shops</div>
             {mockExchanges.slice(0, 3).map(exchange => (
                 <div key={exchange.id} className="exchange-list-item" onClick={() => setSelectedExchange(exchange)}>
                     <div className="exchange-list-content">
