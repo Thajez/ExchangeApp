@@ -147,6 +147,7 @@ function App() {
     const [isRegisterMode, setIsRegisterMode] = useState(true);
     const [expandedFaq, setExpandedFaq] = useState(null);
     const [loginForm, setLoginForm] = useState({ email: '', password: '', name: '' });
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Modal Alert State
     const [modal, setModal] = useState({ open: false, title: '', message: '', type: 'info' });
@@ -173,15 +174,34 @@ function App() {
 
     // Filtered exchanges based on current filters
     const filteredExchanges = useMemo(() => {
+        const query = searchQuery.trim().toLowerCase();
+
         return mockExchanges.filter(exchange => {
+            // Existing filters
             if (filters.exchangeType !== 'all' && exchange.type !== filters.exchangeType) return false;
+
             if (filters.location !== 'all') {
                 if (filters.location === 'online' && exchange.type !== 'online') return false;
                 if (filters.location === 'physical' && exchange.type === 'online') return false;
             }
-            return true;
+
+            // Search filter
+            if (!query) return true;
+
+            const searchableText = [
+                exchange.name,
+                exchange.location,
+                exchange.type,
+                exchange.fees,
+                ...exchange.currencies,
+                ...Object.keys(exchange.rates)
+            ]
+                .join(' ')
+                .toLowerCase();
+
+            return searchableText.includes(query);
         });
-    }, [filters]);
+    }, [filters, searchQuery]);
 
     // Get best rates for home page
     const bestRates = useMemo(() => {
@@ -217,7 +237,7 @@ function App() {
     // Render Functions
     const getTitle = () => {
         if (selectedExchange) return selectedExchange.name;
-        if (showComparison) return 'Palyginti';
+        if (showComparison) return 'Compare';
         switch (currentTab) {
             case 'home': return 'Home';
             case 'search': return 'Search';
@@ -308,7 +328,12 @@ function App() {
             <div className="search-header">
                 <div className="search-bar">
                     <Search size={20} color="#8E8E93" />
-                    <input type="text" placeholder="Search" />
+                    <input
+                        type="text"
+                        placeholder="Search exchanges, locations, currencies"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
                 <button className="filter-button" onClick={() => setShowFilters(true)}>
                     <Filter size={20} />
@@ -600,9 +625,6 @@ function App() {
     const renderComparison = () => (
         <div className="page-content">
             <div className="large-title">Compare</div>
-            <button className="back-btn" onClick={() => setShowComparison(false)}>
-                ← Back to Search
-            </button>
 
             {compareList.length === 0 ? (
                 <div className="empty-state">
